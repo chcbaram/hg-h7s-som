@@ -7,8 +7,9 @@
 
 void apInit(void)
 {  
-  cliOpen(HW_UART_CH_CLI, 115200);  
   logBoot(false);
+  cliOpen(HW_UART_CH_CLI, 115200);  
+  cliBegin();
 }
 
 void apMain(void)

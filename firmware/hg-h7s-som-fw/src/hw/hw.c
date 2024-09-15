@@ -43,7 +43,7 @@ bool hwInit(void)
   qspiInit();
   #endif
   flashInit();
-
+  psramInit();
   
   return true;
 }

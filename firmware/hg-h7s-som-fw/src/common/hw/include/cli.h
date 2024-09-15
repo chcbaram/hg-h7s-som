@@ -50,6 +50,7 @@ bool cliRunStr(const char *fmt, ...);
 void cliShowCursor(bool visibility);
 void cliMoveUp(uint8_t y);
 void cliMoveDown(uint8_t y);
+void cliBegin(void);
 
 #endif
 

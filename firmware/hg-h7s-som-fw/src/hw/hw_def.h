@@ -14,6 +14,7 @@
 #define _USE_HW_MICROS
 // #define _USE_HW_QSPI
 #define _USE_HW_FLASH
+#define _USE_HW_PSRAM
 
 
 #define _USE_HW_LED

@@ -2786,24 +2786,35 @@ HAL_StatusTypeDef HAL_XSPIM_Config(XSPI_HandleTypeDef *const hxspi, XSPIM_CfgTyp
     XSPIM_GetConfig(index + 1U, &(IOM_cfg[index]));
   }
 
-  /********** Disable both XSPI to configure XSPI IO Manager **********/
   if ((XSPI1->CR & XSPI_CR_EN) != 0U)
   {
-    CLEAR_BIT(XSPI1->CR, XSPI_CR_EN);
     xspi_enabled |= 0x1U;
   }
-  if ((XSPI2->CR & XSPI_CR_EN) != 0U)
   {
-    CLEAR_BIT(XSPI2->CR, XSPI_CR_EN);
     xspi_enabled |= 0x2U;
   }
 
-  /***************** Deactivation of previous configuration *****************/
-  CLEAR_REG(XSPIM->CR);
+  if (xspi_enabled == 0)
+  {
+    /********** Disable both XSPI to configure XSPI IO Manager **********/
+    if ((XSPI1->CR & XSPI_CR_EN) != 0U)
+    {
+      CLEAR_BIT(XSPI1->CR, XSPI_CR_EN);
+      xspi_enabled |= 0x1U;
+    }
+    if ((XSPI2->CR & XSPI_CR_EN) != 0U)
+    {
+      CLEAR_BIT(XSPI2->CR, XSPI_CR_EN);
+      xspi_enabled |= 0x2U;
+    }
 
-  /******************** Activation of new configuration *********************/
-  MODIFY_REG(XSPIM->CR, XSPIM_CR_REQ2ACK_TIME, ((pCfg->Req2AckTime - 1U) << XSPIM_CR_REQ2ACK_TIME_Pos));
+    /***************** Deactivation of previous configuration *****************/
+    CLEAR_REG(XSPIM->CR);
 
+    /******************** Activation of new configuration *********************/
+    MODIFY_REG(XSPIM->CR, XSPIM_CR_REQ2ACK_TIME, ((pCfg->Req2AckTime - 1U) << XSPIM_CR_REQ2ACK_TIME_Pos));
+  }
+  
   if (hxspi->Instance == XSPI1)
   {
     IOM_cfg[0].IOPort = pCfg->IOPort ;

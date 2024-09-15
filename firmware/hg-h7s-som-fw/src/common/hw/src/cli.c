@@ -154,6 +154,14 @@ bool cliOpen(uint8_t ch, uint32_t baud)
   return cli_node.is_open;
 }
 
+void cliBegin(void)
+{
+  if (cli_node.is_open)
+  {
+    cliShowPrompt(&cli_node);
+  }
+}
+
 bool cliIsBusy(void)
 {
   return cli_node.is_busy;
