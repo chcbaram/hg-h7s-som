@@ -31,6 +31,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ./Core/Src/flash.c
     ./Core/Src/gpdma.c
     ./Core/Src/memorymap.c
+    ./Core/Src/rtc.c
     ./Core/Src/usart.c
     ./Core/Src/xspi.c
     ./Core/Src/stm32h7rsxx_it.c
@@ -47,6 +48,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_pwr_ex.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_exti.c
+    ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_rtc.c
+    ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_rtc_ex.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_uart.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_uart_ex.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_xspi.c

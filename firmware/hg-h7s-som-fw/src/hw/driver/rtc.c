@@ -173,28 +173,6 @@ bool rtcSetDate(rtc_date_t *rtc_date)
   return true;
 }
 
-void HAL_RTC_MspInit(RTC_HandleTypeDef* rtcHandle)
-{
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
- 
-  if(rtcHandle->Instance==RTC)
-  {
-    /** Initializes the peripherals clock
-    */
-    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-    PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    /* RTC clock enable */
-    __HAL_RCC_RTC_ENABLE();
-    __HAL_RCC_RTCAPB_CLK_ENABLE();
-    __HAL_RCC_RTCAPB_CLKAM_ENABLE();
-  }
-}
-
 bool rtcSetReg(uint32_t index, uint32_t data)
 {
   if (IS_RTC_BKP(index))
@@ -221,6 +199,27 @@ bool rtcGetReg(uint32_t index, uint32_t *p_data)
   }
 }
 
+void HAL_RTC_MspInit(RTC_HandleTypeDef* rtcHandle)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+ 
+  if(rtcHandle->Instance==RTC)
+  {
+    /** Initializes the peripherals clock
+    */
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+    PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    /* RTC clock enable */
+    __HAL_RCC_RTC_ENABLE();
+    __HAL_RCC_RTCAPB_CLK_ENABLE();
+  }
+}
+
 void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
 {
 
@@ -228,7 +227,6 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
   {
     __HAL_RCC_RTC_DISABLE();
     __HAL_RCC_RTCAPB_CLK_DISABLE();
-    __HAL_RCC_RTCAPB_CLKAM_DISABLE();
   }
 }
 

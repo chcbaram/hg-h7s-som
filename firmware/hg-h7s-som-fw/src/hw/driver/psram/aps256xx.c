@@ -310,6 +310,7 @@ int32_t APS256XX_EnableMemoryMappedMode(XSPI_HandleTypeDef *Ctx, uint32_t ReadLa
 int32_t APS256XX_ReadReg(XSPI_HandleTypeDef *Ctx, uint32_t Address, uint8_t *Value, uint32_t LatencyCode)
 {
   XSPI_RegularCmdTypeDef sCommand = {0};
+  uint8_t reg[2];
 
   /* Initialize the read register command */
   sCommand.OperationType       = HAL_XSPI_OPTYPE_COMMON_CFG;
@@ -338,9 +339,20 @@ int32_t APS256XX_ReadReg(XSPI_HandleTypeDef *Ctx, uint32_t Address, uint8_t *Val
   }
 
   /* Reception of the data */
-  if (HAL_XSPI_Receive(Ctx, (uint8_t *)Value, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  if (HAL_XSPI_Receive(Ctx, (uint8_t *)reg, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
     return APS256XX_ERROR;
+  }
+
+  if ((Address % 2) == 0)
+  {
+    Value[0] = reg[0];
+    Value[1] = reg[1];
+  }
+  else
+  {
+    Value[0] = reg[1];
+    Value[1] = reg[0];
   }
 
   return APS256XX_OK;
@@ -403,17 +415,25 @@ int32_t APS256XX_WriteReg(XSPI_HandleTypeDef *Ctx, uint32_t Address, uint8_t Val
   */
 int32_t APS256XX_ReadID(XSPI_HandleTypeDef *Ctx, uint8_t *ID, uint32_t LatencyCode)
 {
-  /* Read the Mode Register 1 and 2 */
-  if (APS256XX_ReadReg(Ctx, APS256XX_MR1_ADDRESS, ID, LatencyCode) != APS256XX_OK)
+  uint8_t reg[2];
+
+  /* Read the Mode Register 1*/
+  if (APS256XX_ReadReg(Ctx, APS256XX_MR1_ADDRESS, reg, LatencyCode) != APS256XX_OK)
   {
     return APS256XX_ERROR;
   }
 
   /* Keep only Vendor ID from Mode Register 1 */
-  *ID &= (APS256XX_MR1_VENDOR_ID);
+  *ID = reg[0] & (APS256XX_MR1_VENDOR_ID);
+
+  /* Read the Mode Register 1*/
+  if (APS256XX_ReadReg(Ctx, APS256XX_MR2_ADDRESS, reg, LatencyCode) != APS256XX_OK)
+  {
+    return APS256XX_ERROR;
+  }
 
   /* Keep only Device ID and Device Density from Mode Register 2 */
-  *(ID + 1) &= (APS256XX_MR2_DEVICE_ID | APS256XX_MR2_DENSITY);
+  *(ID + 1) = reg[0] & (APS256XX_MR2_DEVICE_ID | APS256XX_MR2_DENSITY);
 
   return APS256XX_OK;
 }

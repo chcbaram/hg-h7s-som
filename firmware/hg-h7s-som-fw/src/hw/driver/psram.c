@@ -78,17 +78,21 @@ bool psramInit(void)
     psram_tbl[0].id = 0;
     ret = psramGetVendorID((uint8_t *)&psram_tbl[0].id);
 
-    logPrintf("[  ] ID : 0x%X\n", psram_tbl[0].id);
+    logPrintf("     ID : 0x%X\n", psram_tbl[0].id);
 
-    if (ret == true && psram_tbl[0].id == 0x5D0D)
+    if (ret == true && psram_tbl[0].id == 0x1F0D)
     {
       psram_tbl[0].is_init = true;
       psram_tbl[0].length = PSRAM_MAX_SIZE;
 
-      psramEnterMemoyMaped();
+      logPrintf("     APS25608 Found\n");
+
+      // psramEnterMemoyMaped();
     }
     ret = psram_tbl[0].is_init;
   }
+
+  logPrintf("[%s] psramInit()\n", ret ? "OK":"E_");
 
 #ifdef _USE_HW_CLI
   cliAdd("psram", cliPsram);
@@ -116,7 +120,7 @@ bool psramInitHw(void)
   psramInitGpio();
 
 
-  xspi_max_freq = 100 * 1000000U; // 200Mhz
+  xspi_max_freq = 200 * 1000000U; // 200Mhz
   xspi_clk      = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_XSPI1);
 
   logPrintf("     xspi_max_freq %d Mhz\n", xspi_max_freq/1000000);
@@ -128,22 +132,23 @@ bool psramInitHw(void)
   {
     hxspi.Init.ClockPrescaler = hxspi.Init.ClockPrescaler - 1U;
   }
+  logPrintf("     prescaler     %d \n", hxspi.Init.ClockPrescaler);
 
   hxspi.Instance                     = XSPI1;
-  hxspi.Init.FifoThresholdByte       = 2;
+  hxspi.Init.FifoThresholdByte       = 4;
   hxspi.Init.MemoryMode              = HAL_XSPI_SINGLE_MEM;
   hxspi.Init.MemoryType              = HAL_XSPI_MEMTYPE_APMEM;
   hxspi.Init.MemorySize              = HAL_XSPI_SIZE_256MB;
-  hxspi.Init.ChipSelectHighTimeCycle = 5;
+  hxspi.Init.ChipSelectHighTimeCycle = 1;
   hxspi.Init.FreeRunningClock        = HAL_XSPI_FREERUNCLK_DISABLE;
   hxspi.Init.ClockMode               = HAL_XSPI_CLOCK_MODE_0;
-  hxspi.Init.WrapSize                = HAL_XSPI_WRAP_NOT_SUPPORTED;
+  hxspi.Init.WrapSize                = HAL_XSPI_WRAP_32_BYTES;
   // hxspi.Init.ClockPrescaler          = 0;
   hxspi.Init.SampleShifting          = HAL_XSPI_SAMPLE_SHIFT_NONE;
   hxspi.Init.DelayHoldQuarterCycle   = HAL_XSPI_DHQC_ENABLE;
   hxspi.Init.ChipSelectBoundary      = HAL_XSPI_BONDARYOF_16KB;
   hxspi.Init.MaxTran                 = 0;
-  hxspi.Init.Refresh                 = ((2U * (xspi_clk / (hxspi.Init.ClockPrescaler + 1U)) / 1000000U) - 4U);
+  hxspi.Init.Refresh                 = 0;
   hxspi.Init.MemorySelect            = HAL_XSPI_CSSEL_NCS2;
   if (HAL_XSPI_Init(&hxspi) != HAL_OK)
   {
@@ -313,43 +318,24 @@ bool psramInitReg(void)
   }
   logPrintf("MR8 : 0x%02X 0x%02X\n", reg[0], reg[1]);
 
-  // Configure the 8-bits Octal RAM memory
-  //
-  MODIFY_REG(reg[0], (uint8_t)APS256XX_MR8_X8_X16, (uint8_t)(0)); // 0:8Bit, 0x40:X8/X16 Mode
-
-  if (APS256XX_WriteReg(&hxspi, APS256XX_MR8_ADDRESS, reg[0]) != APS256XX_OK)
-  {
-    return false;
-  }
-  if (APS256XX_ReadReg(&hxspi, APS256XX_MR8_ADDRESS, reg,
-                       (uint32_t)APS256XX_READ_REG_LATENCY((uint32_t)(DEFAULT_READ_LATENCY_CODE))) != APS256XX_OK)
-  {
-    return false;
-  }
-  logPrintf("MR8 : 0x%02X 0x%02X\n", reg[0], reg[1]);
-
-
-  if (APS256XX_ReadReg(&hxspi, APS256XX_MR2_ADDRESS, reg,
-                       (uint32_t)APS256XX_READ_REG_LATENCY((uint32_t)(DEFAULT_READ_LATENCY_CODE))) != APS256XX_OK)
-  {
-    return false;
-  }
-  logPrintf("MR2 : 0x%02X 0x%02X\n", reg[0], reg[1]);
-
-  if (APS256XX_ReadReg(&hxspi, APS256XX_MR1_ADDRESS, reg,
-                       (uint32_t)APS256XX_READ_REG_LATENCY((uint32_t)(DEFAULT_READ_LATENCY_CODE))) != APS256XX_OK)
-  {
-    return false;
-  }
-  logPrintf("MR1 : 0x%02X 0x%02X\n", reg[0], reg[1]);
 
   return true;
 }
 
 bool psramEnterMemoyMaped(void)
 {
-  bool ret = true;
-  return ret;
+  if (APS256XX_EnableMemoryMappedMode(&hxspi,
+                                      (uint32_t)APS256XX_READ_LATENCY(
+                                      (uint32_t)(DEFAULT_READ_LATENCY_CODE),
+                                      (uint32_t)(0)),
+                                      (uint32_t)APS256XX_WRITE_LATENCY(
+                                      (uint32_t)(DEFAULT_WRITE_LATENCY_CODE)),
+                                      (uint32_t)(0), 0U) != APS256XX_OK)
+  {
+    return false;
+  }
+
+  return true;
 }
 
 bool psramRead(uint32_t addr, uint8_t *p_data, uint32_t length)
@@ -397,24 +383,50 @@ void cliPsram(cli_args_t *args)
     }
 
     uint8_t  reg[2];
+    uint8_t  reg_tbl[10];
     uint32_t latency;
      
     latency = APS256XX_READ_REG_LATENCY((uint32_t)(DEFAULT_READ_LATENCY_CODE));
 
     APS256XX_ReadReg(&hxspi, APS256XX_MR0_ADDRESS, reg, latency);
-    logPrintf("MR0 : 0x%02X\n", reg[0]);
+    reg_tbl[0] = reg[0];
+    logPrintf("MR0 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+
     APS256XX_ReadReg(&hxspi, APS256XX_MR1_ADDRESS, reg, latency);
-    logPrintf("MR1 : 0x%02X\n", reg[0]);
+    reg_tbl[1] = reg[0];
+    logPrintf("MR1 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+
     APS256XX_ReadReg(&hxspi, APS256XX_MR2_ADDRESS, reg, latency);
-    logPrintf("MR2 : 0x%02X\n", reg[0]);
+    reg_tbl[2] = reg[0];
+    logPrintf("MR2 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+
     APS256XX_ReadReg(&hxspi, APS256XX_MR3_ADDRESS, reg, latency);
-    logPrintf("MR3 : 0x%02X\n", reg[0]);
+    reg_tbl[3] = reg[0];
+    logPrintf("MR3 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+
     APS256XX_ReadReg(&hxspi, APS256XX_MR4_ADDRESS, reg, latency);
-    logPrintf("MR4 : 0x%02X\n", reg[0]);
+    reg_tbl[4] = reg[0];
+    logPrintf("MR4 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+
     APS256XX_ReadReg(&hxspi, APS256XX_MR6_ADDRESS, reg, latency);
-    logPrintf("MR6 : 0x%02X\n", reg[0]);
+    reg_tbl[6] = reg[0];
+    logPrintf("MR6 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+
     APS256XX_ReadReg(&hxspi, APS256XX_MR8_ADDRESS, reg, latency);
-    logPrintf("MR8 : 0x%02X\n", reg[0]);
+    reg_tbl[8] = reg[0];
+    logPrintf("MR8 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+
+    cliPrintf("Read Latency Code  : %d\n", ((reg_tbl[0]>>2) & 0x7) + 3);
+
+    const uint8_t wr_latency_tbl[] = {3, 7, 5, 0, 4, 0, 6};
+    cliPrintf("Write Latency Code : %d\n",wr_latency_tbl[((reg_tbl[4]>>5) & 0x7)]);
+    cliPrintf("RBX : %d\n", (reg_tbl[8] & (1<<3)) ? 1:0);
+
+    const uint16_t density_tbl[] = {
+      [5]=128,
+      [7]=256,
+      [6]=512};
+    cliPrintf("Density : %d MB\n",density_tbl[((reg_tbl[2]>>0) & 0x7)]);
 
     ret = true;
   }
