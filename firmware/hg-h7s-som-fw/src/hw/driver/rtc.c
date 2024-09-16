@@ -20,6 +20,9 @@ bool rtcInit(void)
   bool ret = true;
   RTC_PrivilegeStateTypeDef privilegeState = {0};
 
+  // TODO : 현재 RTC 초기화가 실패함 
+  logPrintf("[E_] rtcInit()\n");
+  return false;
 
   hrtc.Instance = RTC;
   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
@@ -44,7 +47,7 @@ bool rtcInit(void)
     ret = false;
   }
 
-  logPrintf("[%s] rtcInit()\n", ret ? "OK":"NG");
+  logPrintf("[%s] rtcInit()\n", ret ? "OK":"E_");
   is_init = ret;
 
 #ifdef _USE_HW_CLI

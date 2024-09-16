@@ -103,6 +103,7 @@
 #define DUAL_OUT_FAST_READ_CMD               0x3B
 #define DUAL_INOUT_FAST_READ_CMD             0xBB
 #define QUAD_OUT_FAST_READ_CMD               0x6B
+#define QUAD_OUT_FAST_READ_CMD_32BITS        0x6C
 #define QUAD_INOUT_FAST_READ_CMD             0xEB
 #define QUAD_INOUT_FAST_READ_CMD_32BITS      0xEC
 

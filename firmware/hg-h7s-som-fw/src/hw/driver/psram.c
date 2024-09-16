@@ -87,7 +87,7 @@ bool psramInit(void)
 
       logPrintf("     APS25608 Found\n");
 
-      // psramEnterMemoyMaped();
+      psramEnterMemoyMaped();
     }
     ret = psram_tbl[0].is_init;
   }
@@ -261,7 +261,7 @@ bool psramInitReg(void)
   {
     return false;
   }
-  logPrintf("MR0 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+  logPrintf("     MR0 : 0x%02X 0x%02X\n", reg[0], reg[1]);
 
   // Configure the 8-bits Octal RAM memory
   //
@@ -280,7 +280,7 @@ bool psramInitReg(void)
   {
     return false;
   }
-  logPrintf("MR0 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+  logPrintf("     MR0 : 0x%02X 0x%02X\n", reg[0], reg[1]);
 
 
   // Reading the configuration of Mode Register 4
@@ -290,7 +290,7 @@ bool psramInitReg(void)
   {
     return false;
   }
-  logPrintf("MR4 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+  logPrintf("     MR4 : 0x%02X 0x%02X\n", reg[0], reg[1]);
 
   //  Configure the 8-bits Octal RAM memory
   WRITE_REG(reg[0], ((uint8_t)DEFAULT_WRITE_LATENCY_CODE |
@@ -306,7 +306,7 @@ bool psramInitReg(void)
   {
     return false;
   }
-  logPrintf("MR4 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+  logPrintf("     MR4 : 0x%02X 0x%02X\n", reg[0], reg[1]);
 
 
   // Reading the configuration of Mode Register 8
@@ -316,7 +316,7 @@ bool psramInitReg(void)
   {
     return false;
   }
-  logPrintf("MR8 : 0x%02X 0x%02X\n", reg[0], reg[1]);
+  logPrintf("     MR8 : 0x%02X 0x%02X\n", reg[0], reg[1]);
 
 
   return true;
@@ -473,61 +473,127 @@ void cliPsram(cli_args_t *args)
     ret = true;
   }
   
-  if (args->argc == 2 && args->isStr(0, "test_xip") == true)
+  if (args->argc == 2 && args->isStr(0, "test-xip") == true)
   {
     uint32_t *p_data = (uint32_t *)psram_addr;
-    uint8_t number;
+    uint8_t length_mb;
     uint32_t i;
     uint32_t pre_time;
+    uint32_t test_length;
+    uint32_t speed;
 
 
-    number = (uint8_t)args->getData(1);
+    length_mb = (uint8_t)args->getData(1);
+    test_length = length_mb * 1024*1024;
 
-    while(number > 0)
+    cliPrintf("Length.. %d MB\n", length_mb);
+
+    pre_time = millis();
+    for (i=0; i<test_length/4; i++)
     {
-     pre_time = millis();
-     for (i=0; i<psram_length/4; i++)
-     {
-       p_data[i] = i;
-     }
-     cliPrintf( "Write : %d MB/s\n", psram_length / 1000 / (millis()-pre_time) );
-
-     volatile uint32_t data_sum = 0;
-     pre_time = millis();
-     for (i=0; i<psram_length/4; i++)
-     {
-       data_sum += p_data[i];
-     }
-     cliPrintf( "Read : %d MB/s\n", psram_length / 1000 / (millis()-pre_time) );
-
-
-     for (i=0; i<psram_length/4; i++)
-     {
-       if (p_data[i] != i)
-       {
-         cliPrintf( "%d : 0x%X fail\n", i, p_data[i]);
-         break;
-       }
-     }
-
-     if (i == psram_length/4)
-     {
-       cliPrintf( "Count %d\n", number);
-       cliPrintf( "PSRAM %d MB OK\n\n", psram_length/1024/1024);
-       for (i=0; i<psram_length/4; i++)
-       {
-         p_data[i] = 0x5555AAAA;
-       }
-     }
-
-     number--;
-
-     if (cliAvailable() > 0)
-     {
-       cliPrintf( "Stop test...\n");
-       break;
-     }
+      p_data[i] = i;
     }
+    speed = (test_length * 1000 / (millis()-pre_time)) / 1024;
+    cliPrintf( "Write..  %d.%dMB/s\n", speed/1000, speed%1000);
+
+    volatile uint32_t data_sum = 0;
+    pre_time = millis();
+    for (i=0; i<test_length/4; i++)
+    {
+      data_sum += p_data[i];
+    }
+    speed = (test_length * 1000 / (millis()-pre_time)) / 1024;
+    cliPrintf( "Read..   %d.%dMB/s\n", speed/1000, speed%1000);
+
+
+    bool verify_ret = true;
+
+    cliPrintf("Verify.. ");
+    for (i=0; i<test_length/4; i++)
+    {
+      if (p_data[i] != i)
+      {
+        verify_ret = false;
+        break;
+      }
+    }
+    cliPrintf("%s\n", verify_ret ? "OK":"FAIL");
+    ret = true;
+  }
+
+  if (args->argc == 2 && args->isStr(0, "test-xip-byte") == true)
+  {
+    uint8_t *p_data = (uint8_t *)psram_addr;
+    uint8_t length_mb;
+    uint32_t i;
+    uint32_t pre_time;
+    uint32_t test_length;
+    uint32_t speed;
+
+
+    length_mb = (uint8_t)args->getData(1);
+    test_length = length_mb * 1024 * 1024;
+
+    cliPrintf("Length.. %d MB\n", length_mb);
+
+    pre_time = millis();
+    for (i=0; i<test_length; i++)
+    {
+      p_data[i] = i;
+    }
+    speed = (test_length * 1000 / (millis()-pre_time)) / 1024;
+    cliPrintf( "Write..  %d.%dMB/s\n", speed/1000, speed%1000);
+
+    volatile uint32_t data_sum = 0;
+    pre_time = millis();
+    for (i=0; i<test_length; i++)
+    {
+      data_sum += p_data[i];
+    }
+    speed = (test_length * 1000 / (millis()-pre_time)) / 1024;
+    cliPrintf( "Read..   %d.%dMB/s\n", speed/1000, speed%1000);
+
+    bool verify_ret = true;
+
+    cliPrintf("Verify.. ");
+    for (i=0; i<test_length; i++)
+    {
+      if (p_data[i] != (uint8_t)i)
+      {
+        verify_ret = false;
+        break;
+      }
+    }
+    cliPrintf("%s\n", verify_ret ? "OK":"FAIL");
+    ret = true;
+  }
+
+  if (args->argc == 3 && args->isStr(0, "test-xip-read") == true)
+  {
+    uint32_t *p_data;
+    uint8_t length_mb;
+    uint32_t i;
+    uint32_t pre_time;
+    uint32_t test_length;
+    uint32_t speed;
+
+
+    p_data = (uint32_t *)args->getData(1);
+    length_mb = (uint8_t)args->getData(2);
+    test_length = length_mb * 1024 * 1024;
+
+    cliPrintf("Addr..   0x%X\n", args->getData(1));
+    cliPrintf("Length.. %d MB\n", length_mb);
+
+
+    volatile uint32_t data_sum = 0;
+    pre_time = millis();
+    for (i=0; i<test_length/4; i++)
+    {
+      data_sum += p_data[i];
+    }
+    speed = (test_length * 1000 / (millis()-pre_time)) / 1024;
+    cliPrintf( "Read..   %d.%dMB/s\n", speed/1000, speed%1000);
 
     ret = true;
   }
@@ -586,7 +652,9 @@ void cliPsram(cli_args_t *args)
   {
     cliPrintf("psram info \n");
     cliPrintf("psram test \n");
-    cliPrintf("psram test-xip \n");
+    cliPrintf("psram test-xip [size MB]\n");
+    cliPrintf("psram test-xip-byte [size MB]\n");
+    cliPrintf("psram test-xip-read [addr] [size MB]\n");
     cliPrintf("psram read  [addr] [length]\n");
     cliPrintf("psram write [addr] [data]\n");    
   }
