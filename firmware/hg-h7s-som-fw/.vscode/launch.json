@@ -7,26 +7,6 @@
     {
       "cwd": "${workspaceRoot}",
       "executable": "./build/hg-h7s-som-fw.elf",
-      "name": "Debug with OpenOCD",
-      "request": "launch",
-      "type": "cortex-debug",
-      "servertype": "openocd",
-      "windows": {
-        "serverpath": "${env:OPENOCD_DIR}\\bin\\openocd.exe",
-        "searchDir": [
-          "${env:OPENOCD_DIR}\\share\\openocd\\scripts"
-        ],
-      },
-      "configFiles": [
-        "interface/stlink.cfg",
-        "target/stm32u5x.cfg"
-      ],     
-      "runToEntryPoint": "main",
-      "showDevDebugOutput": "none"
-    },
-    {
-      "cwd": "${workspaceRoot}",
-      "executable": "./build/hg-h7s-som-fw.elf",
       "name": "Debug with STLINK",
       "request": "launch",
       "type": "cortex-debug",
@@ -47,25 +27,6 @@
         "svdFile": "C:/ST/STM32CubeCLT_1.16.0/STMicroelectronics_CMSIS_SVD/STM32H7S.svd"
       },       
       "runToEntryPoint": "main",  
-    },    
-    {
-      "cwd": "${workspaceRoot}",
-      "executable": "./build/hg-h7s-som-fw.elf",
-      "name": "Debug with STLINK With BOOT",
-      "request": "launch",
-      "type": "cortex-debug",
-      "showDevDebugOutput": "none",      
-      "servertype": "stlink",
-      "runToEntryPoint": "main",  
-      "overrideRestartCommands": [
-        "load"
-      ],
-      "postStartSessionCommands": [
-        "monitor reset"
-      ],
-      "overrideLaunchCommands": [       
-        "load",
-      ],       
-    },     
+    }   
   ]
 }

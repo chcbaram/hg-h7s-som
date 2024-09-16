@@ -41,25 +41,6 @@
         "monitor halt",
         "load build/hg-h7s-som-xip.elf",
       ]       
-    },    
-    {
-      "cwd": "${workspaceRoot}",
-      "executable": "./build/hg-h7s-som-xip.elf",
-      "name": "Debug with STLINK With BOOT",
-      "request": "launch",
-      "type": "cortex-debug",
-      "showDevDebugOutput": "none",      
-      "servertype": "stlink",
-      "runToEntryPoint": "main",  
-      "overrideRestartCommands": [
-        "load"
-      ],
-      "postStartSessionCommands": [
-        "monitor reset"
-      ],
-      "overrideLaunchCommands": [       
-        "load",
-      ],       
-    },     
+    }    
   ]
 }
