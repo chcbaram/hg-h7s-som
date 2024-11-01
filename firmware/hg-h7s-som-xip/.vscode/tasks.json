@@ -14,9 +14,9 @@
       "label": "build-build",
       "type": "shell",
       "windows":{
-        "command": "cmake -S . -B build -G 'MinGW Makefiles'; cmake --build build -j10",
+        "command": "cmake -S . -B build -G 'MinGW Makefiles'; cmake --build build -j20",
       },
-      "command": "cmake -S . -B build; cmake --build build -j10",    
+      "command": "cmake -S . -B build; cmake --build build -j20",    
       "problemMatcher": [],
       "group": {
         "kind": "build",
