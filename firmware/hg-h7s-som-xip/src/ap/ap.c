@@ -32,6 +32,7 @@ void apInit(void)
 
   #ifdef _USE_HW_CLI
   cliOpen(HW_UART_CH_CLI, 115200);  
+  cliLogo();
   logBoot(false);
   #endif
 }

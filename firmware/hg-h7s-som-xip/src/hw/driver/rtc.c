@@ -1,7 +1,5 @@
 #include "rtc.h"
 
-
-
 #ifdef _USE_HW_RTC
 #include "cli.h"
 #include <time.h>
