@@ -123,11 +123,11 @@ bool uartOpen(uint8_t ch, uint32_t baud)
       uart_tbl[ch].p_huart->Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
       uart_tbl[ch].p_huart->Init.ClockPrescaler = UART_PRESCALER_DIV1;
       uart_tbl[ch].p_huart->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-      if (ch == _DEF_UART1)
-      {
-        uart_tbl[ch].p_huart->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
-        uart_tbl[ch].p_huart->AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
-      }
+      // if (ch == _DEF_UART1)
+      // {
+      //   uart_tbl[ch].p_huart->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
+      //   uart_tbl[ch].p_huart->AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
+      // }
 
       qbufferCreate(&uart_tbl[ch].qbuffer, &uart_tbl[ch].rx_buf[0], UART_RX_BUF_LENGTH);
 

@@ -37,11 +37,21 @@
 #define      HW_CLI_GUI_WIDTH       80
 #define      HW_CLI_GUI_HEIGHT      24
 
+#define _USE_HW_RTC
+#define      HW_RTC_BOOT_MODE       RTC_BKP_DR3
+#define      HW_RTC_RESET_BITS      RTC_BKP_DR4
+
+#define _USE_HW_RESET
+#define      HW_RESET_BOOT          1
+
 
 //-- CLI
 //
 #define _USE_CLI_HW_QSPI            1
 #define _USE_CLI_HW_FLASH           1
+#define _USE_CLI_HW_RTC             1
+#define _USE_CLI_HW_RESET           1
+
 
 
 #define FLASH_SIZE_TAG              0x400

@@ -33,6 +33,8 @@ bool hwInit(void)
   logPrintf("Booting..Ver  \t\t: %s\r\n", _DEF_FIRMWATRE_VERSION);  
   logPrintf("Booting..Clock\t\t: %d Mhz\r\n", (int)HAL_RCC_GetSysClockFreq()/1000000);
 
+  rtcInit();
+  resetInit();
   qspiInit();
 
   return true;
