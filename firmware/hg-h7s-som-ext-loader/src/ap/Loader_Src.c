@@ -85,7 +85,7 @@ int SectorErase (uint32_t EraseStartAddress ,uint32_t EraseEndAddress)
   EraseStartAddress = EraseStartAddress -  EraseStartAddress % 0x00010000;
 
   ledToggle(_DEF_LED1);
-return 1;
+// return 1;
   while (EraseEndAddress >= EraseStartAddress)
   {
     BlockAddr = EraseStartAddress & 0x0FFFFFFF;

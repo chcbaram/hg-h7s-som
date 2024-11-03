@@ -78,19 +78,11 @@ bool qspiInit(void)
   {
     ret = false;
   }
-return true;
+
   if (BSP_QSPI_GetID(&info) == QSPI_OK)
   {
-    if (info.device_id[0] == 0xEF && info.device_id[1] == 0x40 && info.device_id[2] == 0x19)
-    {
-      // uint32_t qspi_clk;
-
-      // qspi_clk = HAL_RCC_GetPLL2SFreq() / (hqspi.Init.ClockPrescaler + 1);
-
-      // logPrintf("[OK] qspiInit()\n");
-      // logPrintf("     W25Q256JV Found\r\n");
-      // logPrintf("     CLK : %d Mhz\r\n", qspi_clk/1000000);
-      
+    if (info.device_id[0] == 0xC2 && info.device_id[2] == 0x85 && info.device_id[4] == 0x39)
+    {      
       ret = true;
     }
     else
@@ -105,8 +97,6 @@ return true;
     logPrintf("[E_] qspiInit()\n");
     ret = false;
   }
-
-
 
   is_init = ret;
 
@@ -398,6 +388,7 @@ uint8_t BSP_QSPI_Init(void)
 {
   XSPIM_CfgTypeDef sOspiManagerCfg = {0};
 
+  memset(&hqspi, 0, sizeof(hqspi));
 
   hqspi.Instance = XSPI2;
 
@@ -420,7 +411,7 @@ uint8_t BSP_QSPI_Init(void)
   hqspi.Init.FreeRunningClock        = HAL_XSPI_FREERUNCLK_DISABLE;
   hqspi.Init.ClockMode               = HAL_XSPI_CLOCK_MODE_0;
   hqspi.Init.WrapSize                = HAL_XSPI_WRAP_NOT_SUPPORTED;
-  hqspi.Init.ClockPrescaler          = 1;
+  hqspi.Init.ClockPrescaler          = 2;
   hqspi.Init.SampleShifting          = HAL_XSPI_SAMPLE_SHIFT_NONE;
   hqspi.Init.DelayHoldQuarterCycle   = HAL_XSPI_DHQC_DISABLE;
   hqspi.Init.ChipSelectBoundary      = HAL_XSPI_BONDARYOF_NONE;
@@ -511,13 +502,14 @@ uint8_t BSP_QSPI_Config(void)
 
   (void)ret;
 
+
   // Set Dummy Cycle to 12
   //
   if (QSPI_SPI_WRCR2(&hqspi, 0x300, 0x04) != QSPI_OK)
   {
     return QSPI_ERROR;
   }
-return QSPI_OK;
+
   // Enter OPI Mode
   //
   if (QSPI_SPI_WRCR2(&hqspi, 0, 0x02) != QSPI_OK)
@@ -529,6 +521,10 @@ return QSPI_OK;
 
   ret = QSPI_OPI_RDCR2(&hqspi, 0, &reg_cfg);
   logPrintf("     OPI 0x%X : 0x%02X %s\n", 0, reg_cfg, ret==QSPI_OK ? "OK":"FAIL");
+  if (ret != QSPI_OK)
+  {
+    return QSPI_ERROR;
+  }
 
   return QSPI_OK;
 }
@@ -673,7 +669,7 @@ uint8_t BSP_QSPI_Erase_Block(uint32_t BlockAddress)
   s_command.InstructionMode    = HAL_XSPI_INSTRUCTION_8_LINES;
   s_command.InstructionDTRMode = HAL_XSPI_INSTRUCTION_DTR_ENABLE;
   s_command.InstructionWidth   = HAL_XSPI_INSTRUCTION_16_BITS;
-  s_command.Instruction        = 0xDC23;
+  s_command.Instruction        = 0x21DE;
   
   s_command.AddressMode        = HAL_XSPI_ADDRESS_8_LINES;
   s_command.AddressDTRMode     = HAL_XSPI_ADDRESS_DTR_ENABLE;
@@ -718,7 +714,7 @@ uint8_t BSP_QSPI_Erase_Sector(uint32_t SectorAddress)
   s_command.InstructionMode    = HAL_XSPI_INSTRUCTION_8_LINES;
   s_command.InstructionDTRMode = HAL_XSPI_INSTRUCTION_DTR_ENABLE;
   s_command.InstructionWidth   = HAL_XSPI_INSTRUCTION_16_BITS;
-  s_command.Instruction        = 0x21DE;
+  s_command.Instruction        = 0xDC23;
   
   s_command.AddressMode        = HAL_XSPI_ADDRESS_8_LINES;
   s_command.AddressDTRMode     = HAL_XSPI_ADDRESS_DTR_ENABLE;
@@ -874,8 +870,7 @@ uint8_t BSP_QSPI_GetID(QSPI_Info* p_info)
   
   s_command.DataMode           = HAL_XSPI_DATA_8_LINES;
   s_command.DataDTRMode        = HAL_XSPI_DATA_DTR_ENABLE;
-  // s_command.DummyCycles        = MX25LM25645G_DUMMY_CYCLES_READ_OPI;
-  s_command.DummyCycles        = 12;
+  s_command.DummyCycles        = MX25LM25645G_DUMMY_CYCLES_READ_OPI;
   s_command.DQSMode            = HAL_XSPI_DQS_ENABLE;
 
   s_command.DataLength         = 20;
@@ -1102,7 +1097,7 @@ static uint8_t QSPI_WriteEnable_OPI(XSPI_HandleTypeDef *p_hqspi)
   s_config.IntervalTime    = 0x10;
   s_config.AutomaticStop   = HAL_XSPI_AUTOMATIC_STOP_ENABLE;
 
-  if (HAL_XSPI_AutoPolling(p_hqspi, &s_config, QSPI_CMD_TIMEOUT) != HAL_OK)
+  if (HAL_XSPI_AutoPolling(p_hqspi, &s_config, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
     return QSPI_ERROR;
   }
@@ -1137,7 +1132,7 @@ static uint8_t QSPI_AutoPollingMemReady(XSPI_HandleTypeDef *p_hqspi, uint32_t Ti
 
   if (HAL_XSPI_Command(p_hqspi, &s_command, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
-    return false;
+    return QSPI_ERROR;
   }
 
   s_config.MatchValue      = 0;

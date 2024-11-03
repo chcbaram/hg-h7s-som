@@ -154,7 +154,7 @@ bool psramInitHw(void)
   {
     return false;
   }
-  sXspiManagerCfg.nCSOverride = HAL_XSPI_CSSEL_OVR_NCS2;
+  sXspiManagerCfg.nCSOverride = HAL_XSPI_CSSEL_OVR_NCS1;
   sXspiManagerCfg.IOPort      = HAL_XSPIM_IOPORT_1;
   if (HAL_XSPIM_Config(&hxspi, &sXspiManagerCfg, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
@@ -204,10 +204,10 @@ bool psramInitGpio(void)
   __HAL_RCC_GPIOO_CLK_ENABLE();
   /**XSPI1 GPIO Configuration
   PP5     ------> XSPIM_P1_IO5
-  PO1     ------> XSPIM_P1_NCS2
   PP2     ------> XSPIM_P1_IO2
   PP6     ------> XSPIM_P1_IO6
   PP7     ------> XSPIM_P1_IO7
+  PO0     ------> XSPIM_P1_NCS1
   PP4     ------> XSPIM_P1_IO4
   PP3     ------> XSPIM_P1_IO3
   PO4     ------> XSPIM_P1_CLK
@@ -222,7 +222,7 @@ bool psramInitGpio(void)
   GPIO_InitStruct.Alternate = GPIO_AF9_XSPIM_P1;
   HAL_GPIO_Init(GPIOP, &GPIO_InitStruct);
 
-  GPIO_InitStruct.Pin       = GPIO_PIN_1 | GPIO_PIN_4 | GPIO_PIN_2;
+  GPIO_InitStruct.Pin       = GPIO_PIN_0 | GPIO_PIN_4 | GPIO_PIN_2;
   GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
   GPIO_InitStruct.Pull      = GPIO_NOPULL;
   GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;

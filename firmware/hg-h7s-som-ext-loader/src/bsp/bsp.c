@@ -11,7 +11,8 @@ bool bspInit(void)
 {
   bool ret = true;
 
-
+  SCB_DisableICache();
+  SCB_DisableDCache();
 
   SystemInit();
 

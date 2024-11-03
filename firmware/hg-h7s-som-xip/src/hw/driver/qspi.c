@@ -667,7 +667,7 @@ uint8_t BSP_QSPI_Erase_Block(uint32_t BlockAddress)
   s_command.InstructionMode    = HAL_XSPI_INSTRUCTION_8_LINES;
   s_command.InstructionDTRMode = HAL_XSPI_INSTRUCTION_DTR_ENABLE;
   s_command.InstructionWidth   = HAL_XSPI_INSTRUCTION_16_BITS;
-  s_command.Instruction        = 0xDC23;
+  s_command.Instruction        = 0x21DE;
   
   s_command.AddressMode        = HAL_XSPI_ADDRESS_8_LINES;
   s_command.AddressDTRMode     = HAL_XSPI_ADDRESS_DTR_ENABLE;
@@ -712,7 +712,7 @@ uint8_t BSP_QSPI_Erase_Sector(uint32_t SectorAddress)
   s_command.InstructionMode    = HAL_XSPI_INSTRUCTION_8_LINES;
   s_command.InstructionDTRMode = HAL_XSPI_INSTRUCTION_DTR_ENABLE;
   s_command.InstructionWidth   = HAL_XSPI_INSTRUCTION_16_BITS;
-  s_command.Instruction        = 0x21DE;
+  s_command.Instruction        = 0xDC23;
   
   s_command.AddressMode        = HAL_XSPI_ADDRESS_8_LINES;
   s_command.AddressDTRMode     = HAL_XSPI_ADDRESS_DTR_ENABLE;

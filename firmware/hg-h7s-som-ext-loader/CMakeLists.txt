@@ -56,7 +56,6 @@ endforeach(TMP_PATH)
 add_executable(${EXECUTABLE} 
   ${SRC_FILES}
   ${SRC_FILES_RECURSE}
-  ${QMK_SRC_FILES}
 )
 
 
@@ -99,8 +98,8 @@ target_compile_options(${EXECUTABLE} PRIVATE
   # -Wenum-conversion
 
   -Wall
-  -g3
-  -Og
+  # -g3
+  -Os
   )
 
 target_link_options(${EXECUTABLE} PRIVATE

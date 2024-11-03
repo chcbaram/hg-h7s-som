@@ -41,6 +41,9 @@ bool hwInit(void)
   SCB_EnableICache();
   SCB_EnableDCache();
   #endif  
-  
+
+  logPrintf("[  ] ICache  %s\n", (SCB->CCR & SCB_CCR_IC_Msk) ? "ON":"OFF");
+  logPrintf("[  ] DCache  %s\n", (SCB->CCR & SCB_CCR_DC_Msk) ? "ON":"OFF");
+
   return true;
 }
