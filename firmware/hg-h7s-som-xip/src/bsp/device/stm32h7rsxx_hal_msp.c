@@ -34,8 +34,31 @@ void HAL_MspInit(void)
     Error_Handler();
   }
 
+  __HAL_RCC_SBS_CLK_ENABLE();
+
+
   HAL_PWREx_EnableXSPIM1();
   HAL_PWREx_EnableXSPIM2();
 
-  HAL_SBS_EnableIOSpeedOptimize(SBS_IO_XSPI1_HSLV);
+
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_CSI;
+  RCC_OscInitStruct.CSIState       = RCC_CSI_ON;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* Configure the compensation cell */
+  HAL_SBS_ConfigCompensationCell(SBS_IO_XSPI1_CELL, SBS_IO_CELL_CODE, 0U, 0U);
+
+  /* Enable compensation cell */
+  HAL_SBS_EnableCompensationCell(SBS_IO_XSPI1_CELL);
+
+  /* wait ready before enabled IO */
+  while (HAL_SBS_GetCompensationCellReadyStatus(SBS_IO_XSPI1_CELL_READY) != 1U);
+
+
+  HAL_SBS_EnableIOSpeedOptimize(SBS_IO_XSPI1_HSLV);  
 }

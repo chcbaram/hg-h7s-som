@@ -35,6 +35,7 @@ bool hwInit(void)
 
   rtcInit();
   resetInit();
+  psramInit();
   qspiInit();
 
   #ifdef _USE_HW_CACHE
