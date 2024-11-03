@@ -20,9 +20,6 @@ bool rtcInit(void)
   bool ret = true;
   RTC_PrivilegeStateTypeDef privilegeState = {0};
 
-  // TODO : 현재 RTC 초기화가 실패함 
-  logPrintf("[E_] rtcInit()\n");
-  return false;
 
   hrtc.Instance = RTC;
   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
@@ -47,7 +44,7 @@ bool rtcInit(void)
     ret = false;
   }
 
-  logPrintf("[%s] rtcInit()\n", ret ? "OK":"E_");
+  logPrintf("[%s] rtcInit()\n", ret ? "OK":"NG");
   is_init = ret;
 
 #ifdef _USE_HW_CLI
@@ -176,6 +173,29 @@ bool rtcSetDate(rtc_date_t *rtc_date)
   return true;
 }
 
+void HAL_RTC_MspInit(RTC_HandleTypeDef* rtcHandle)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+ 
+  if(rtcHandle->Instance==RTC)
+  {
+    HAL_PWR_EnableBkUpAccess();
+
+    /** Initializes the peripherals clock
+    */
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+    PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    /* RTC clock enable */
+    __HAL_RCC_RTC_ENABLE();
+    __HAL_RCC_RTCAPB_CLK_ENABLE();
+  }
+}
+
 bool rtcSetReg(uint32_t index, uint32_t data)
 {
   if (IS_RTC_BKP(index))
@@ -199,27 +219,6 @@ bool rtcGetReg(uint32_t index, uint32_t *p_data)
   else
   {
     return false;
-  }
-}
-
-void HAL_RTC_MspInit(RTC_HandleTypeDef* rtcHandle)
-{
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
- 
-  if(rtcHandle->Instance==RTC)
-  {
-    /** Initializes the peripherals clock
-    */
-    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-    PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    /* RTC clock enable */
-    __HAL_RCC_RTC_ENABLE();
-    __HAL_RCC_RTCAPB_CLK_ENABLE();
   }
 }
 
