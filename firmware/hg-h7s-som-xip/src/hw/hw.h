@@ -16,6 +16,7 @@ extern "C" {
 #include "rtc.h"
 #include "reset.h"
 #include "qspi.h"
+#include "psram.h"
 
 
 bool hwInit(void);

@@ -10,8 +10,10 @@
 #define _DEF_BOARD_NAME           "HG-H7S-SOM-XIP"
 
 
+#define _USE_HW_CACHE
 #define _USE_HW_QSPI
 #define _USE_HW_FLASH
+#define _USE_HW_PSRAM
 
 
 #define _USE_HW_LED
@@ -52,5 +54,8 @@
 #define FLASH_ADDR_BOOT             0x08000000
 #define FLASH_ADDR_FIRM             0x70000000
 #define FLASH_ADDR_UPDATE           0x70080000
+
+#define FLASH_ADDR_PSRAM            0x90400000
+
 
 #endif

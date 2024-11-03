@@ -82,6 +82,7 @@ target_include_directories(${EXECUTABLE} PRIVATE
 target_compile_definitions(${EXECUTABLE} PRIVATE
   -DSTM32H7S7xx
   -DUSE_HAL_DRIVER  
+  -DUSE_FULL_ASSERT
   )
 
 target_compile_options(${EXECUTABLE} PRIVATE

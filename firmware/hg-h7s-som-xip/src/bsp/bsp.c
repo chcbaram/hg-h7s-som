@@ -266,3 +266,20 @@ void bspMpuInit(void)
   /* Enable the MPU */
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 }
+
+void assert_failed(uint8_t* file, uint32_t line)
+{
+  char *file_name_buf;
+  
+
+  if (strrchr((char *) file,'/') == NULL) 
+  {
+    file_name_buf = strrchr((char *)file,'\\')+1;
+  }
+  else 
+  {
+    file_name_buf = strrchr((char *)file,'/')+1;
+  }
+
+  logPrintf("assert_failed() file: %s  line :%d\n", file_name_buf, line);
+}

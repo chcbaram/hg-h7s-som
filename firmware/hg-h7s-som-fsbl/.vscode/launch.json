@@ -1,0 +1,32 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "cwd": "${workspaceRoot}",
+      "executable": "./build/hg-h7s-som-fw.elf",
+      "name": "Debug with STLINK",
+      "request": "launch",
+      "type": "cortex-debug",
+      "showDevDebugOutput": "none",      
+      "servertype": "stlink",
+      "serverArgs": [
+        "-m","1",
+        "--extload", "${workspaceFolder}/tools/W25Q256JV_HG-H7S-SOM.stldr"         
+      ],      
+      "osx": {
+        "serverpath": "/opt/ST/STM32CubeCLT_1.16.0/STLink-gdb-server/bin/ST-LINK_gdbserver",
+        "stm32cubeprogrammer": "/opt/ST/STM32CubeCLT_1.16.0/STM32CubeProgrammer/bin",
+        "svdFile": "/opt/ST/STM32CubeCLT_1.16.0/STMicroelectronics_CMSIS_SVD/STM32H7S.svd"
+      },       
+      "windows": {
+        "serverpath": "C:/ST/STM32CubeCLT_1.16.0/STLink-gdb-server/bin/ST-LINK_gdbserver.exe",
+        "stm32cubeprogrammer": "C:/ST/STM32CubeCLT_1.16.0/STM32CubeProgrammer/bin",
+        "svdFile": "C:/ST/STM32CubeCLT_1.16.0/STMicroelectronics_CMSIS_SVD/STM32H7S.svd"
+      },       
+      "runToEntryPoint": "main",  
+    }   
+  ]
+}
