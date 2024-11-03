@@ -6,7 +6,7 @@ include(arm-none-eabi-gcc)
 
 # 프로젝트 이름은 최종 출력 파일 이름으로 사용된다.
 #
-set(PRJ_NAME W25Q256JV_HG-H7S-SOM)
+set(PRJ_NAME MX25LM25645G_HG-H7S-SOM)
 
 
 project(${PRJ_NAME}
@@ -99,8 +99,8 @@ target_compile_options(${EXECUTABLE} PRIVATE
   # -Wenum-conversion
 
   -Wall
-  # -g3
-  -Os
+  -g3
+  -Og
   )
 
 target_link_options(${EXECUTABLE} PRIVATE

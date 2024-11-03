@@ -41,12 +41,20 @@ PHDRS {Loader PT_LOAD; SgInfo PT_LOAD ; }
 /* Specify the memory areas */
 MEMORY
 {
-  RAM (xrw)        : ORIGIN = 0x24000004,   LENGTH = 319K  
+  RAM (xrw)        : ORIGIN = 0x20000004,   LENGTH = 319K  
 }
 
 /* Define output sections */
 SECTIONS
 {
+  .isr_vector :
+  {
+  	. = . + 0x1FC;
+    . = ALIGN(4);
+    KEEP(*(.isr_vector)) /* Startup code */
+    . = ALIGN(4);
+  } >RAM :Loader
+
   /* The program code and other data goes into FLASH */
   .text :
   {

@@ -6,7 +6,7 @@
 #include "bsp.h"
 
 
-#define _DEF_FIRMWATRE_VERSION    "V240825R1"
+#define _DEF_FIRMWATRE_VERSION    "V241103R1"
 #define _DEF_BOARD_NAME           "HG-H7S-SOM-XIP"
 
 

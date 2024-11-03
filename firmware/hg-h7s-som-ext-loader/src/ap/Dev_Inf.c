@@ -4,7 +4,7 @@
 
 struct StorageInfo const StorageInfo  =  
 {
-   "W25Q256JV_HG-H7S-SOM", 	  					          // Device Name 
+   "MX25LM25645G_HG-H7S-SOM", 	      	          // Device Name 
    SPI_FLASH,                   					        // Device Type
    0x70000000,                						        // Device Start Address
    0x02000000,              						          // Device Size in 32 MBytes

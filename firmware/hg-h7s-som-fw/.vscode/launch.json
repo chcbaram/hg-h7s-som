@@ -14,7 +14,7 @@
       "servertype": "stlink",
       "serverArgs": [
         "-m","1",
-        "--extload", "${workspaceFolder}/tools/W25Q256JV_HG-H7S-SOM.stldr"         
+        "--extload", "${workspaceFolder}/tools/MX25LM25645G_HG-H7S-SOM.stldr"         
       ],      
       "osx": {
         "serverpath": "/opt/ST/STM32CubeCLT_1.16.0/STLink-gdb-server/bin/ST-LINK_gdbserver",

@@ -35,4 +35,7 @@ void HAL_MspInit(void)
   }
 
   HAL_PWREx_EnableXSPIM1();
+  HAL_PWREx_EnableXSPIM2();
+
+  HAL_SBS_EnableIOSpeedOptimize(SBS_IO_XSPI1_HSLV);
 }

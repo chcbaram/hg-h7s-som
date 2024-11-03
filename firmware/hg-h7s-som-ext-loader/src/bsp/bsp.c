@@ -3,7 +3,6 @@
 
 
 static void SystemClock_Config(void);
-static void bspMpuInit(void);
 
 
 
@@ -15,6 +14,7 @@ bool bspInit(void)
 
 
   SystemInit();
+
   HAL_Init();
   SystemClock_Config();
 
@@ -22,9 +22,7 @@ bool bspInit(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
-
-
-  bspMpuInit();
+  __HAL_RCC_GPION_CLK_ENABLE();
 
   return ret;
 }
@@ -47,10 +45,24 @@ void delay(uint32_t ms)
 
 uint32_t millis(void)
 {
-  return HAL_GetTick();
+  return TIM2->CNT;
 }
 
+void HAL_Delay(uint32_t Delay)
+{
+  uint32_t tickstart = millis();
+  uint32_t wait = Delay;
 
+  /* Add a freq to guarantee minimum wait */
+  if (wait < HAL_MAX_DELAY)
+  {
+    wait += (uint32_t)(1);
+  }
+
+  while ((millis() - tickstart) < wait)
+  {
+  }
+}
 
 void Error_Handler(void)
 {
@@ -127,124 +139,6 @@ void SystemClock_Config(void)
   }
 }
 
-
-void bspMpuInit(void)
-{
-
-  /*  T C B
-   *  0 0 0 Strongly Ordered  , Stringly Ordered
-   *  0 0 1 Device            , Shared Device
-   *  0 1 0 Normal            , Write through, no write allocate (메모리 동기화됨)
-   *  0 1 1 Normal            , Write-back, no write allocate (실제 메모리와 다를 수 있음)
-   *  1 0 0 Normal            , Non-cacheable
-   *  1 0 1 Reserved
-   *  1 1 0 Undefined
-   *  1 1 1 Normal            , Write-back, write and read allocate
-   *  2 0 0 Device            , Non-shareable device
-   *  2 0 1 Reserved
-   */
-
-  MPU_Region_InitTypeDef MPU_InitStruct = {0};
-
-  /* Disables the MPU */
-  HAL_MPU_Disable();
-
-
-  // MPU 설정 메모리 크기에 정렬된 주소가 입력되어야 함.
-
-  /* Configure the MPU as Strongly ordered for not defined regions */
-  MPU_InitStruct.Number           = MPU_REGION_NUMBER0;
-  MPU_InitStruct.Enable           = MPU_REGION_ENABLE;
-  MPU_InitStruct.BaseAddress      = 0x0;
-  MPU_InitStruct.Size             = MPU_REGION_SIZE_4GB;
-  MPU_InitStruct.AccessPermission = MPU_REGION_NO_ACCESS;
-  MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL0;
-  MPU_InitStruct.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
-  MPU_InitStruct.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
-  MPU_InitStruct.IsShareable      = MPU_ACCESS_SHAREABLE;
-  MPU_InitStruct.SubRegionDisable = 0x87;
-  MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
-
-
-  /* Write-back, write and read allocate */
-  MPU_InitStruct.Number           = MPU_REGION_NUMBER1;
-  MPU_InitStruct.Enable           = MPU_REGION_ENABLE;
-  MPU_InitStruct.BaseAddress      = 0x24000000;
-  MPU_InitStruct.Size             = MPU_REGION_SIZE_512KB;
-  MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL1;
-  MPU_InitStruct.IsCacheable      = MPU_ACCESS_CACHEABLE;
-  MPU_InitStruct.IsBufferable     = MPU_ACCESS_BUFFERABLE;
-  MPU_InitStruct.IsShareable      = MPU_ACCESS_SHAREABLE;
-  MPU_InitStruct.SubRegionDisable = 0x0;
-  MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
-  MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
-
-
-  /* None Cache */
-  MPU_InitStruct.Number           = MPU_REGION_NUMBER2;
-  MPU_InitStruct.Enable           = MPU_REGION_ENABLE;
-  MPU_InitStruct.BaseAddress      = 0x24000000;
-  MPU_InitStruct.Size             = MPU_REGION_SIZE_16KB;
-  MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL1;
-  MPU_InitStruct.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
-  MPU_InitStruct.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
-  MPU_InitStruct.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
-  MPU_InitStruct.SubRegionDisable = 0x0;
-  MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
-  MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
-
-
-  /* Write-back, write and read allocate */
-  MPU_InitStruct.Number           = MPU_REGION_NUMBER3;
-  MPU_InitStruct.Enable           = MPU_REGION_ENABLE;
-  MPU_InitStruct.BaseAddress      = 0x08000000;
-  MPU_InitStruct.Size             = MPU_REGION_SIZE_64KB;
-  MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL1;
-  MPU_InitStruct.IsCacheable      = MPU_ACCESS_CACHEABLE;
-  MPU_InitStruct.IsBufferable     = MPU_ACCESS_BUFFERABLE;
-  MPU_InitStruct.IsShareable      = MPU_ACCESS_SHAREABLE;
-  MPU_InitStruct.SubRegionDisable = 0x0;
-  MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
-  MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
-
-
-  /* Write-back, write and read allocate */
-  MPU_InitStruct.Number           = MPU_REGION_NUMBER4;
-  MPU_InitStruct.Enable           = MPU_REGION_ENABLE;
-  MPU_InitStruct.BaseAddress      = 0x90000000;
-  MPU_InitStruct.Size             = MPU_REGION_SIZE_32MB;
-  MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL1;
-  MPU_InitStruct.IsCacheable      = MPU_ACCESS_CACHEABLE;
-  MPU_InitStruct.IsBufferable     = MPU_ACCESS_BUFFERABLE;
-  MPU_InitStruct.IsShareable      = MPU_ACCESS_SHAREABLE;
-  MPU_InitStruct.SubRegionDisable = 0x0;
-  MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
-  MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
-
-
-  /* Write-back, write and read allocate */
-  MPU_InitStruct.Number           = MPU_REGION_NUMBER5;
-  MPU_InitStruct.Enable           = MPU_REGION_ENABLE;
-  MPU_InitStruct.BaseAddress      = 0x70000000;
-  MPU_InitStruct.Size             = MPU_REGION_SIZE_32MB;
-  MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL1;
-  MPU_InitStruct.IsCacheable      = MPU_ACCESS_CACHEABLE;
-  MPU_InitStruct.IsBufferable     = MPU_ACCESS_BUFFERABLE;
-  MPU_InitStruct.IsShareable      = MPU_ACCESS_SHAREABLE;
-  MPU_InitStruct.SubRegionDisable = 0x0;
-  MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
-  MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
-
-  /* Enable the MPU */
-  HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
-}
-
 static TIM_HandleTypeDef        TimHandle;
 
 HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
@@ -259,7 +153,7 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
 
 
   // Compute the prescaler value to have TIMx counter clock equal to 1Kh
-  uwPrescalerValue = (uint32_t)((64000000 / 2) / 1000) - 1;
+  uwPrescalerValue = (uint32_t)((SystemCoreClock / 2) / 10000) - 1;
 
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};

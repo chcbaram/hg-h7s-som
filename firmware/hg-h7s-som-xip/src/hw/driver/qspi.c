@@ -1257,8 +1257,7 @@ static uint8_t QSPI_OPI_RDCR2(XSPI_HandleTypeDef *p_hqspi, uint32_t addr, uint8_
   
   s_command.DataMode           = HAL_XSPI_DATA_8_LINES;
   s_command.DataDTRMode        = HAL_XSPI_DATA_DTR_ENABLE;
-  // s_command.DummyCycles        = MX25LM25645G_DUMMY_CYCLES_READ_OPI;
-  s_command.DummyCycles        = 3;
+  s_command.DummyCycles        = MX25LM25645G_DUMMY_CYCLES_READ_OPI;
   s_command.DQSMode            = HAL_XSPI_DQS_ENABLE;
   s_command.DataLength         = 2;
 
