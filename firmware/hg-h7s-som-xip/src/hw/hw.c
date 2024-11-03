@@ -37,5 +37,10 @@ bool hwInit(void)
   resetInit();
   qspiInit();
 
+  #ifdef _USE_HW_CACHE
+  SCB_EnableICache();
+  SCB_EnableDCache();
+  #endif  
+  
   return true;
 }

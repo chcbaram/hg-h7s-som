@@ -34,13 +34,18 @@
       "servertype": "stlink",
       "serverArgs": [
         "-m","1"
-      ],      
+      ], 
+      "osx": {
+        "serverpath": "/opt/ST/STM32CubeCLT_1.16.0/STLink-gdb-server/bin/ST-LINK_gdbserver",
+        "stm32cubeprogrammer": "/opt/ST/STM32CubeCLT_1.16.0/STM32CubeProgrammer/bin",
+        "svdFile": "/opt/ST/STM32CubeCLT_1.16.0/STMicroelectronics_CMSIS_SVD/STM32H7S.svd"
+      },             
       "runToEntryPoint": "main",  
       "overrideLaunchCommands": [
         "monitor reset",      
         "monitor halt",
         "load build/hg-h7s-som-xip.elf",
-      ]       
+      ]  
     }    
   ]
 }
