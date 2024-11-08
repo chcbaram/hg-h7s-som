@@ -30,6 +30,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ./Core/Src/extmem_manager.c
     ./Core/Src/flash.c
     ./Core/Src/gpdma.c
+    ./Core/Src/i2c.c
     ./Core/Src/memorymap.c
     ./Core/Src/rtc.c
     ./Core/Src/usart.c
@@ -48,6 +49,10 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_pwr_ex.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_exti.c
+    ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_i2c.c
+    ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_i2c_ex.c
+    ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_smbus.c
+    ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_smbus_ex.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_rtc.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_rtc_ex.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_uart.c

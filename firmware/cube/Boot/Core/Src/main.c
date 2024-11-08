@@ -21,6 +21,7 @@
 #include "extmem_manager.h"
 #include "flash.h"
 #include "gpdma.h"
+#include "i2c.h"
 #include "memorymap.h"
 #include "rtc.h"
 #include "usart.h"
@@ -111,6 +112,7 @@ int main(void)
   MX_XSPI2_Init();
   MX_FLASH_Init();
   MX_RTC_Init();
+  MX_I2C1_Init();
   MX_EXTMEM_MANAGER_Init();
   /* USER CODE BEGIN 2 */
 
@@ -176,7 +178,17 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL2.PLLS = 2;
   RCC_OscInitStruct.PLL2.PLLT = 2;
   RCC_OscInitStruct.PLL2.PLLFractional = 0;
-  RCC_OscInitStruct.PLL3.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.PLL3.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL3.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL3.PLLM = 4;
+  RCC_OscInitStruct.PLL3.PLLN = 30;
+  RCC_OscInitStruct.PLL3.PLLP = 2;
+  RCC_OscInitStruct.PLL3.PLLQ = 2;
+  RCC_OscInitStruct.PLL3.PLLR = 18;
+  RCC_OscInitStruct.PLL3.PLLS = 2;
+  RCC_OscInitStruct.PLL3.PLLT = 2;
+  RCC_OscInitStruct.PLL3.PLLFractional = 0;
+
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();

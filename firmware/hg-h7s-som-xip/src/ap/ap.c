@@ -9,7 +9,7 @@ void apInit(void)
 {
   void (**jump_func)(void) = (void (**)(void))(FLASH_ADDR_FIRM + FLASH_SIZE_TAG + 4); 
 
-
+  
   qspiSetXipMode(true);
   logPrintf("XIP Enable\r\n"); 
 

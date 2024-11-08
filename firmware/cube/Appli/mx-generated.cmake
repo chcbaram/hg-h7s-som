@@ -19,8 +19,10 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ./Core/Src/main.c
+    ./Core/Src/gpio.c
     ./Core/Src/flash.c
     ./Core/Src/gpdma.c
+    ./Core/Src/ltdc.c
     ./Core/Src/rtc.c
     ./Core/Src/stm32h7rsxx_it.c
     ./Core/Src/stm32h7rsxx_hal_msp.c
@@ -40,6 +42,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_rtc_ex.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_tim.c
     ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_tim_ex.c
+    ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_ltdc.c
+    ../Drivers/STM32H7RSxx_HAL_Driver/Src/stm32h7rsxx_hal_ltdc_ex.c
     ./Core/Src/system_stm32h7rsxx.c
     ./Core/Src/sysmem.c
     ./Core/Src/syscalls.c

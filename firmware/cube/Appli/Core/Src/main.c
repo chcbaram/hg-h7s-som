@@ -20,7 +20,9 @@
 #include "main.h"
 #include "flash.h"
 #include "gpdma.h"
+#include "ltdc.h"
 #include "rtc.h"
+#include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -95,8 +97,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPDMA1_Init();
+  MX_GPIO_Init();
   MX_FLASH_Init();
   MX_RTC_Init();
+  MX_LTDC_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */

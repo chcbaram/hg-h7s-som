@@ -10,7 +10,7 @@
 #define _DEF_BOARD_NAME           "HG-H7S-SOM-XIP"
 
 
-#define _USE_HW_CACHE
+// #define _USE_HW_CACHE
 #define _USE_HW_QSPI
 #define _USE_HW_FLASH
 #define _USE_HW_PSRAM
