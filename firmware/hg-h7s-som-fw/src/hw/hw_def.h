@@ -48,6 +48,19 @@
 #define _USE_HW_RESET
 #define      HW_RESET_BOOT          1
 
+#define _USE_HW_GPIO
+#define      HW_GPIO_MAX_CH         4
+
+#define _USE_HW_PSRAM
+#define      HW_PARAM_ADDR          0x90000000
+
+#define _USE_HW_LTDC
+#define      HW_LTDC_BUF_ADDR       HW_PARAM_ADDR
+
+#define _USE_HW_LCD
+#define      HW_LCD_WIDTH           800
+#define      HW_LCD_HEIGHT          480
+
 
 //-- CLI
 //
