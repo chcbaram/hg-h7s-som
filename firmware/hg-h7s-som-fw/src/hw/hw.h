@@ -23,8 +23,10 @@ extern "C" {
 #include "flash.h"
 #include "rtc.h"
 #include "reset.h"
+#include "gpio.h"
 #include "qspi.h"
 #include "psram.h"
+#include "ltdc.h"
 
 
 bool hwInit(void);

@@ -27,6 +27,34 @@
         "svdFile": "C:/ST/STM32CubeCLT_1.16.0/STMicroelectronics_CMSIS_SVD/STM32H7S.svd"
       },       
       "runToEntryPoint": "main",  
-    }   
+    },
+    {
+      "cwd": "${workspaceRoot}",
+      "executable": "./build/hg-h7s-som-fw.elf",
+      "name": "Debug with STLINK With BOOT",
+      "request": "launch",
+      "type": "cortex-debug",
+      "showDevDebugOutput": "none",      
+      "servertype": "stlink",
+      "osx": {
+        "serverpath": "/opt/ST/STM32CubeCLT_1.16.0/STLink-gdb-server/bin/ST-LINK_gdbserver",
+        "stm32cubeprogrammer": "/opt/ST/STM32CubeCLT_1.16.0/STM32CubeProgrammer/bin",
+        "svdFile": "/opt/ST/STM32CubeCLT_1.16.0/STMicroelectronics_CMSIS_SVD/STM32H7S.svd"
+      },        
+      "serverArgs": [
+        "-m","1",
+        "--extload", "${workspaceFolder}/tools/MX25LM25645G_HG-H7S-SOM.stldr"         
+      ],       
+      "runToEntryPoint": "main",  
+      "overrideRestartCommands": [
+        "load"
+      ],
+      "postStartSessionCommands": [
+        "monitor reset"
+      ],
+      "overrideLaunchCommands": [       
+        "load",
+      ],       
+    },     
   ]
 }

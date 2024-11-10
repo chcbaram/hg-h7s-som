@@ -41,11 +41,13 @@ bool hwInit(void)
   
   rtcInit();
   resetInit();
+  gpioInit();
   #ifdef _USE_HW_QSPI
   qspiInit();
   #endif
   flashInit();
   psramInit();
   
+  ltdcInit();
   return true;
 }
